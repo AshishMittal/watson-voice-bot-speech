@@ -1,0 +1,5 @@
+ibm-watson==5.2.3
+Flask==2.1.0
+python-dotenv==0.10.3
+flask-cors==3.0.9
+flask-socketio==5.3.2
