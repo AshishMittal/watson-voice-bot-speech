@@ -62,8 +62,10 @@ def Welcome():
 @app.route('/api/conversation', methods=['POST', 'GET'])
 def getConvResponse():
 
-    convText = request.form.get('convText')
-    convContext = request.form.get('context', "{}")
+    '''
+    #convText = request.form.get('convText')
+    #convContext = request.form.get('context', "{}")
+
     jsonContext = json.loads(convContext)
 
     response = assistant.message(workspace_id=workspace_id,
@@ -74,6 +76,14 @@ def getConvResponse():
     reponseText = response["output"]["text"]
     responseDetails = {'responseText': '... '.join(reponseText),
                        'context': response["context"]}
+    '''
+    
+    outputString = "Please say about the following named locations!"
+    #responseDetails = {'responseText': '... '.join(outputString),
+    #                   'context': response["context"]}
+    responseDetails = {'responseText': ''.join(outputString),
+                       'context': json.loads("{}")}
+    
     return jsonify(results=responseDetails)
 
 
@@ -102,10 +112,8 @@ def getSpeechFromText():
 @app.route('/api/speech-to-text', methods=['POST'])
 def getTextFromSpeech():
 
-    sttService = SpeechToTextV1()
-
     audio = request.get_data(cache=False)
-
+    sttService = SpeechToTextV1()
     response = sttService.recognize(
             audio=audio,
             content_type='audio/wav',
@@ -113,28 +121,37 @@ def getTextFromSpeech():
             word_confidence=True,
             smart_formatting=True).get_result()
 
+    skip_our_model = False
     # Ask user to repeat if STT can't transcribe the speech
     if len(response['results']) < 1:
-        return Response(mimetype='plain/text',
-                        response="Sorry, didn't get that. please try again!")
-
-    text_output = response['results'][0]['alternatives'][0]['transcript']
-    text_output = text_output.strip()
-    print(text_output)
+        #return Response(mimetype='plain/text',
+        #                response="Sorry, didn't get that. please try again!")
+        stt_text_output = "There was some problem with the recording. Please try again!"
+        skip_our_model = True
+    else:
+        text_output = response['results'][0]['alternatives'][0]['transcript']
+        stt_text_output = text_output.strip()
+        print(stt_text_output)
     
-    '''
-    headers = {
-        "Content-Type": "audio/wav"
-    }
-    our_response = requests.post(our_api_url, headers=headers, data=audio)
-    print("Decoding from our Model: {}".format(our_response.text))
+    if not skip_our_model:
+        headers = {
+            "Content-Type": "audio/wav"
+        }
+        our_response = requests.post(our_api_url, headers=headers, data=audio)
+        print("Decoding from our Model: {}".format(our_response.text))
 
-    text_output = our_response.text
-    '''
+        text_output = our_response.text
+    else:
+        text_output = "There was some problem with the recording. Please try again!"
 
-    return Response(response=text_output, mimetype='plain/text')
+    final_response = {}
+    final_response['stt'] = "STT: " + stt_text_output
+    final_response['ours'] = "Ours: " + text_output
+    #final_output = "STT Service: {}\nOur Model: {}".format(stt_text_output, text_output)
 
-@app.route('/api/speech-to-text_ours', methods=['POST'])
+    return jsonify(final_response)
+
+@app.route('/api/speech-to-text_orig', methods=['POST'])
 def getTextFromSpeechOurs():
 
     sttService = SpeechToTextV1()

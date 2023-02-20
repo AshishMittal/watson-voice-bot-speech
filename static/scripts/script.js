@@ -158,7 +158,9 @@ function stopRecording(button) {
       // Decode asynchronously
       request.onload = function () {
         callConversation(request.response);
-        displayMsgDiv(request.response, 'user');
+        json_response = JSON.parse(request.response)
+        displayMsgDiv(json_response.stt, 'user');
+        displayMsgDiv(json_response.ours, 'user');
       };
       request.send(blob);
     });

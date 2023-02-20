@@ -47,7 +47,24 @@ main {
   height: 100%;
   padding-top: 0;
   font-family: "Roboto-Light";
-  font-size: 24pt;
+  font-size: 12pt;
+}
+
+.mdl-card__supporting-text-info {
+  width: auto;
+  height: 50%;
+  padding-top: 10px;
+  font-family: "Roboto-Light";
+  font-size: 12pt;
+}
+
+.mdl-card__supporting-text-info ul {
+    -moz-column-count: 4;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 4;
+    -webkit-column-gap: 20px;
+    column-count: 4;
+    column-gap: 20px;
 }
 
 #messages {
@@ -169,8 +186,8 @@ main {
 }
 
 .msg-card-wide.mdl-card .mdl-card__supporting-text {
-  font-size: 3vw;
-  line-height: 3.2vw;
+  font-size: 1.5vw;
+  line-height: 1.5vw;
 }
 .mdl-layout__header {min-height: 50px;}
 #message-card-header {
