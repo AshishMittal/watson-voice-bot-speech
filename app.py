@@ -34,7 +34,7 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 CORS(app)
 
-our_api_url = "http://127.0.0.1:5000/transcribe_stream"
+our_api_url = "http://speech.sl.cloud9.ibm.com:7000/transcribe_stream"
 
 # Redirect http to https on CloudFoundry
 @app.before_request
