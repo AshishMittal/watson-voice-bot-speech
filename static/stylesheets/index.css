@@ -56,6 +56,29 @@ main {
   padding-top: 10px;
   font-family: "Roboto-Light";
   font-size: 12pt;
+  display: "inline-flex";
+}
+
+#container {
+  display: flex;
+}
+
+.left {
+  width: 30%;
+}
+
+.right {
+  width: 70%;
+}
+
+button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .mdl-card__supporting-text-info ul {
@@ -159,7 +182,23 @@ main {
   /* border-bottom: 1px solid red; */
 }
 
+.msg-card-wide.mdl-card.ours {
+  text-align: left;
+  margin-top: 47px;
+  /* border-bottom: 1px solid red; */
+}
+
 .user-line {
+  margin-bottom: 5px;
+  margin-top: -11.5px;
+  margin-left: 1%;
+  width: 4%;
+  height: 12px;
+  font-size: 10px;
+  border-top: 2px solid #b71a1a;
+}
+
+.ours-line {
   margin-bottom: 5px;
   margin-top: -11.5px;
   margin-left: 1%;
@@ -279,4 +318,67 @@ main {
     width: 113%;
     outline: none;
 
+}
+
+/* Style the feedback button image */
+.feedback-image {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+/* Hide the default feedback button */
+#feedback-button {
+  display: none;
+}
+
+/* Style the modal */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 999; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-content div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal-content label {
+  width: 100px;
+  text-align: right;
+  margin-right: 10px;
 }

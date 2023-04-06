@@ -60,54 +60,28 @@
 
           </div>
           <div class="mdl-card__supporting-text-info mdl-color-text--grey-600">
-              This demo demonstrates the comparison of our Dictionary guided ASR decoding technique against the state-of-the-art ASR model. 
-              In this demo, we show that if we have certain named entities known beforehand (as is the case with WAVI use-case), we can improve the predictions of such entities by our novel techinque.
-              To evaluate this demo, we present the list of entities that the model is trained for and we recommend you use utterances comprising of these entities:
-              <ul>
-                <li>algonquin</li>
-                <li>orpington</li>
-                <li>bellwood</li>
-                <li>saint cloud</li>
-                <li>libertyville</li>
-                <li>russellville</li>
-                <li>prussia</li>
-                <li>texarkana</li>
-                <li>lewiston</li>
-                <li>lealman</li>
-                <li>juneau</li>
-                <li>northridge</li>
-                <li>greenburgh</li>
-                <li>gallup</li>
-                <li>hereford</li>
-                <li>chatsworth</li>
-                <li>deland</li>
-                <li>minnetonka</li>
-                <li>maricopa</li>
-                <li>murfreesboro</li>
-                <li>greenacres</li>
-                <li>hackensack</li>
-                <li>kirkwood</li>
-                <li>huntsville</li>
-                <li>nampa</li>
-                <li>menomonie</li>
-                <li>houma</li>
-                <li>clarksdale</li>
-                <li>maumelle</li>
-                <li>easley</li>
-                <li>winthrop</li>
-                <li>newcastle upon tyne</li>
-                <li>penicuik</li>
-                <li>las cruces</li>
-                <li>chicopee</li>
-                <li>blackburn</li>
-                <li>salina</li>
-                <li>anoka</li>
-                <li>camden town</li>
-                <li>marquette</li>
-                <li>colleyville</li>
-                <li>kalamazoo</li>
-                <li>chalmette</li>
+
+            This demo demonstrates the comparison of our Dictionary guided ASR decoding technique against the state-of-the-art ASR model. 
+            In this demo, we show that if we have certain named entities known beforehand (as is the case with WAVI use-case), we can improve the predictions of such entities by our novel techinque.
+            To evaluate this demo, we present the list of entities that the model is augmented with. We recommend you use utterances comprising of these entities: <br><br>
+
+            <div id="container">
+            <div class="left">
+            <form>
+              <!-- <label for="inputBox">Enter a bias entities:</label> -->
+              <textarea id="inputBox" placeholder="Enter your biasing terms here" name="inputBox" rows="20" cols="40"></textarea>
+        
+              <button type="button" onclick="updateBiasEntities()">Update</button>
+              <button type="button" onclick="addBiasEntities()">Add to existing</button>
+            </form> 
+            </div>
+              
+              <div class="right">
+              <ul id="bias-entity-list">
               </ul>
+            </div>
+          </div>
+          
           </div>
         </div>
       </div>
@@ -120,6 +94,9 @@
 <script type="text/javascript" src="./static/scripts/script.js"></script>
 <script type="text/javascript" src="./static/scripts/recorder.js"></script>
 <script type="text/javascript" src="./static/scripts/recordWorker.js"></script>
+<script type="text/javascript" src="./static/scripts/recordWorker.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 </body>
 
 </html>

@@ -25,6 +25,7 @@ from ibm_watson import AssistantV1
 from ibm_watson import SpeechToTextV1
 from ibm_watson import TextToSpeechV1
 from ibm_cloud_sdk_core import get_authenticator_from_environment
+import uuid
 
 import requests
 
@@ -34,7 +35,10 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 CORS(app)
 
-our_api_url = "http://speech.sl.cloud9.ibm.com:7000/transcribe_stream"
+transcribe_api_url = "http://speech.sl.cloud9.ibm.com:7000/transcribe_stream"
+bias_entity_fetch_url = "http://speech.sl.cloud9.ibm.com:7000/entities"
+bias_entity_update_url = "http://speech.sl.cloud9.ibm.com:7000/update_bias_entities"
+feedback_api_url = "http://speech.sl.cloud9.ibm.com:7000/feedback"
 
 # Redirect http to https on CloudFoundry
 @app.before_request
@@ -108,6 +112,18 @@ def getSpeechFromText():
 
     return Response(response=generate(), mimetype="audio/x-wav")
 
+'''
+#to be used for debugging the front-end.
+@app.route('/api/speech-to-text', methods=['POST'])
+def getTextFromSpeech():
+    final_response = {}
+    final_response['stt'] = "STT: hello"
+    final_response['ours'] = "Ours: hello"
+    final_response['whisper'] = "Whisper: hello"
+    final_response['id'] = uuid.uuid4()
+
+    return jsonify(final_response)
+'''
 
 @app.route('/api/speech-to-text', methods=['POST'])
 def getTextFromSpeech():
@@ -116,11 +132,13 @@ def getTextFromSpeech():
     sttService = SpeechToTextV1()
     response = sttService.recognize(
             audio=audio,
+            model='en-US_Telephony',
             content_type='audio/wav',
             timestamps=True,
             word_confidence=True,
             smart_formatting=True).get_result()
 
+    final_response = {}
     skip_our_model = False
     # Ask user to repeat if STT can't transcribe the speech
     if len(response['results']) < 1:
@@ -133,23 +151,91 @@ def getTextFromSpeech():
         stt_text_output = text_output.strip()
         print(stt_text_output)
     
+    final_response['stt'] = "STT: " + stt_text_output
+    
     if not skip_our_model:
         headers = {
             "Content-Type": "audio/wav"
         }
-        our_response = requests.post(our_api_url, headers=headers, data=audio)
-        print("Decoding from our Model: {}".format(our_response.text))
+        our_response = requests.post(transcribe_api_url, headers=headers, data=audio)
+        print("Decoding from our Model: {}".format(our_response.json()))
 
-        text_output = our_response.text
+        results = our_response.json()
+        id = results['id']
+        our_transcript = results['ours']
+        final_response['ours'] = "Ours: " + our_transcript
+        whisper_transcript = results['whisper']
+        final_response['whisper'] = "Whisper: " + whisper_transcript
+        final_response['id'] = id
     else:
         text_output = "There was some problem with the recording. Please try again!"
 
-    final_response = {}
-    final_response['stt'] = "STT: " + stt_text_output
-    final_response['ours'] = "Ours: " + text_output
     #final_output = "STT Service: {}\nOur Model: {}".format(stt_text_output, text_output)
 
     return jsonify(final_response)
+
+@app.route("/api/entities", methods=["GET"])
+def get_entities():
+    entity_response = requests.get(bias_entity_fetch_url)
+    print("Biased entities from our Model: {}".format(entity_response.text))
+
+    entity_list = entity_response.text.strip('][').split(', ')    
+
+    entities = []
+    for entity_value in entity_list:
+        entity_object = {}
+        entity_object["name"] = entity_value.replace("\"", "").replace("\'", "")
+        entities.append(entity_object)
+
+    # Return the data as JSON
+    return jsonify(entities)
+
+@app.route("/api/update_bias_entities", methods=["POST"])
+def update_bias_entities():
+    json_data = request.get_json()
+    headers = {
+            "Content-Type": "application/json"
+    }
+    entity_response = requests.post(bias_entity_update_url, headers=headers, data=json.dumps(json_data))
+    print("New Biased entities from our Model: {}".format(entity_response.text))
+    entity_list = entity_response.text.strip('][').split(', ') 
+
+    entities = []
+    for entity_value in entity_list:
+        entity_object = {}
+        entity_object["name"] = entity_value.replace("\"", "").replace("\'", "")
+        entities.append(entity_object)
+
+    # Return the data as JSON
+    return jsonify(entities)
+
+@app.route("/api/feedback", methods=["POST"])
+def get_feedback():
+    json_data = request.get_json()
+    print(json_data)
+
+    headers = {
+            "Content-Type": "application/json"
+    }
+    
+    feedback_response = requests.post(feedback_api_url, headers=headers, data=json.dumps(json_data))
+    print("New Biased entities from our Model: {}".format(feedback_response.text))
+    entity_list = feedback_response.text.strip('][').split(', ') 
+
+    '''
+    #dummy
+    response = "[test_1, test_2, test_3]"
+    entity_list = response.strip('][').split(', ') 
+    '''
+
+    entities = []
+    for entity_value in entity_list:
+        entity_object = {}
+        entity_object["name"] = entity_value.replace("\"", "").replace("\'", "")
+        entities.append(entity_object)
+
+    # Return the data as JSON
+    return jsonify(entities)
 
 @app.route('/api/speech-to-text_orig', methods=['POST'])
 def getTextFromSpeechOurs():

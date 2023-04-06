@@ -2,7 +2,7 @@
 
 This document shows how to deploy the server using Cloud Foundry on IBM Cloud.
 
-[![Deploy to IBM Cloud](https://cloud.ibm.com/devops/setup/deploy/button_x2.png)](https://cloud.ibm.com/devops/setup/deploy?repository=https://github.com/IBM/watson-voice-bot.git)
+[![Deploy to IBM Cloud](https://cloud.ibm.com/devops/setup/deploy/button_x2.png)](https://cloud.ibm.com/devops/setup/deploy?repository=https://github.com/AshishMittal/watson-voice-bot-speech.git)
 
 1. Click the above `Deploy to IBM Cloud` button and then click on the `Delivery Pipeline` tool integration.
 
